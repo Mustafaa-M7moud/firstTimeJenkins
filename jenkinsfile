@@ -1,0 +1,20 @@
+pipline {
+    agent any
+    stages{
+        stage('build'){
+            steps{
+                echo "building Image"
+                sh "docker build -t mostafastudies/pipline:${env.BUILD_NUMBER} ."
+            }
+        }
+        stage('push'){
+            steps{
+                echo "Pushing Image"
+                withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                    sh "docker login -u USERNAME -p PASSWORD"
+                    sh "docker push mostafastudies/pipline:${env.BUILD_NUMBER}"
+                }
+            }
+        }
+    }
+}
