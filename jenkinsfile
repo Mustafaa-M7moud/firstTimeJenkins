@@ -11,8 +11,8 @@ pipeline {
             steps{
                 echo "Pushing Image"
                 withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-                    sh "docker login -u $USERNAME -p $PASSWORD"
-                    sh "docker push mostafastudies/pipline:${env.BUILD_NUMBER}"
+                    sh 'docker login -u $USERNAME -p $PASSWORD'
+                    sh 'docker push mostafastudies/pipline:${env.BUILD_NUMBER}'
                 }
             }
         }
