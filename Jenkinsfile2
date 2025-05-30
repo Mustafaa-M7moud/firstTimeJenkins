@@ -1,0 +1,33 @@
+pipeline {
+    agent {
+        docker {
+            image 'docker:latest'  // Choose a Docker image with Docker CLI installed
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+
+    stages {
+
+        stage('Build Docker Image') {
+            steps {
+                echo "building Image"
+                sh "docker build -t mostafastudies/dynamicSlave:${env.BUILD_NUMBER} ."
+            }
+        }
+
+        stage('Login to Docker Registry') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'Docker-cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                    sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
+                    sh "docker push mostafastudies/dynamicSlave:${env.BUILD_NUMBER}"
+                }
+            }
+        }
+
+
+    post {
+        always {
+            sh 'docker logout'
+        }
+    }
+}
